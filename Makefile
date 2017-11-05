@@ -3,8 +3,8 @@ DEBUG_FLAGS = -g
 
 LIB_FLAGS = $(shell pkg-config --cflags --libs allegro-5.0 allegro_main-5.0 allegro_image-5.0 allegro_font-5.0) -lm
 
-HEADERS = game.h
-SOURCE = main.c game.c
+HEADERS = game.h lemming.h
+SOURCE = main.c game.c lemming.c
 BINARY = lemmings
 
 all:

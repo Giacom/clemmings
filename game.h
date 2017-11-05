@@ -3,15 +3,15 @@
 
 #include "allegro5/allegro.h"
 
-enum InputResult {
+typedef enum {
     QUIT_GAME,
     NOTHING
-};
+} INPUT_RESULT;
 
 
 void game_run(void);
-enum InputResult game_handle_input(ALLEGRO_EVENT* event);
-void game_update(double delta);
-void game_draw(double delta);
+INPUT_RESULT game_handle_input(ALLEGRO_EVENT* event);
+void game_update(void);
+void game_draw(void);
 
 #endif // GAME_H
