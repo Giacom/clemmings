@@ -1,5 +1,6 @@
 #include "lemming.h"
 #include "game.h"
+#include "world.h"
 
 const int max_lemmings = 255;
 LEMMING lemmings[max_lemmings];
@@ -22,11 +23,17 @@ void lemming_draw(LEMMING* lemming) {
     if (lemming->state == WALKING_LEFT) {
         flags = ALLEGRO_FLIP_HORIZONTAL;
     }
-    al_draw_bitmap_region(lemming_sprite, 0, 0, sprite_width, sprite_height, lemming->x, lemming->y, flags);
+    al_draw_bitmap_region(lemming_sprite, 0, 0, sprite_width, sprite_height, lemming->x - (sprite_width / 2), lemming->y - sprite_height + 1, flags);
 }
 
 void lemming_update(LEMMING* lemming) {
     if (lemming->state == DEAD) {
+        return;
+    }
+
+    bool is_colliding_on_floor = is_collision(&active_world, lemming->x, lemming->y + 1);
+    if (!is_colliding_on_floor) {
+        lemming->y += 1;
         return;
     }
 

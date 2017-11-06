@@ -1,10 +1,10 @@
 RELEASE_FLAGS = -O2
-DEBUG_FLAGS = -g
+DEBUG_FLAGS = -g -D DEBUG
 
 LIB_FLAGS = $(shell pkg-config --cflags --libs allegro-5.0 allegro_main-5.0 allegro_image-5.0 allegro_font-5.0) -lm
 
-HEADERS = game.h lemming.h
-SOURCE = main.c game.c lemming.c
+HEADERS = game.h lemming.h world.h
+SOURCE = main.c game.c lemming.c world.c
 BINARY = lemmings
 
 all:

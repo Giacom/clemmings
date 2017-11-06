@@ -6,6 +6,7 @@
 
 #include "game.h"
 #include "lemming.h"
+#include "world.h"
 
 int scale = 4;
 int screen_width = 1024, screen_height = 512;
@@ -24,11 +25,13 @@ void game_run() {
 
     default_font = al_create_builtin_font();
 
-    lemming_sprite = al_load_bitmap("lemmings.tga");
+    lemming_sprite = al_load_bitmap("lemmings.png");
     if (!lemming_sprite) {
         printf("Error loading sprite.\n");
         return;
     }
+
+    active_world = load_world("world.png");
 
     ALLEGRO_DISPLAY* display = al_create_display(screen_width, screen_height);
     al_set_window_title(display, "Lemmings");
@@ -78,7 +81,7 @@ INPUT_RESULT game_handle_input(ALLEGRO_EVENT* event) {
 void game_update(void) {
     if (active_lemmings < max_lemmings && current_time > last_spawn + spawn_time) {
         last_spawn = current_time;
-        lemmings[active_lemmings++] = (LEMMING) { 128, 0, WALKING_RIGHT };
+        lemmings[active_lemmings++] = (LEMMING) { 128, 0, WALKING_LEFT };
     }
     for (int i = 0; i < active_lemmings; i++) {
         lemming_update(&lemmings[i]);
@@ -87,6 +90,7 @@ void game_update(void) {
 
 void game_draw(void) {
     al_clear_to_color(al_map_rgba(0, 255, 255, 255));
+    al_draw_bitmap(active_world.sprite, 0, 0, 0);
     for (int i = 0; i < active_lemmings; i++) {
         lemming_draw(&lemmings[i]);
     }
