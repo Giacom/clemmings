@@ -2,11 +2,10 @@
 #include "game.h"
 #include "world.h"
 
-const int max_lemmings = 255;
-LEMMING lemmings[max_lemmings];
+LEMMING lemmings[MAX_LEMMINGS];
 
 int active_lemmings = 0;
-const double spawn_time = 1.0;
+const double spawn_time = 0.1;
 double last_spawn = 0.0;
 
 ALLEGRO_BITMAP* lemming_sprite = NULL;
@@ -31,17 +30,33 @@ void lemming_update(LEMMING* lemming) {
         return;
     }
 
+    int new_x = lemming->x;
+    int new_y = lemming->y;
+
     bool is_colliding_on_floor = is_collision(&active_world, lemming->x, lemming->y + 1);
     if (!is_colliding_on_floor) {
-        lemming->y += 1;
-        return;
+        new_y += 1;
+    } else if (lemming->state == WALKING_LEFT || lemming->state == WALKING_RIGHT) {
+        int modifier = lemming->state == WALKING_LEFT ? -1 : 1;
+
+        bool blocked = true;
+        for (int y = 0; y < 3; y++) {
+            int test_x = lemming->x + modifier;
+            int test_y = lemming->y - y;
+            bool is_colliding_wall = is_collision(&active_world, test_x, test_y);
+            if (!is_colliding_wall) {
+                blocked = false;
+                new_x = test_x;
+                new_y = test_y;
+                break;
+            }
+        }
+
+        if (blocked) {
+            lemming->state = lemming->state == WALKING_LEFT ? WALKING_RIGHT : WALKING_LEFT;
+        }
     }
 
-    if (lemming->state == WALKING_LEFT) {
-        lemming->x -= 1;
-    }
-
-    if (lemming->state == WALKING_RIGHT) {
-        lemming->x += 1;
-    }
+    lemming->x = new_x;
+    lemming->y = new_y;
 }

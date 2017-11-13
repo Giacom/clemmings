@@ -3,6 +3,8 @@
 
 #include "allegro5/allegro.h"
 
+#define MAX_LEMMINGS 255
+
 typedef enum {
     WALKING_RIGHT,
     WALKING_LEFT,
@@ -15,7 +17,6 @@ typedef struct {
     LEMMING_STATE state;
 } LEMMING;
 
-extern const int max_lemmings;
 extern LEMMING lemmings[];
 
 extern int active_lemmings;

@@ -23,6 +23,11 @@ void game_run() {
     al_init_font_addon();
     al_init_image_addon();
 
+    ALLEGRO_PATH *path = al_get_standard_path(ALLEGRO_RESOURCES_PATH);
+    al_append_path_component(path, "resources");
+    al_change_directory(al_path_cstr(path, '/'));  // change the working directory
+    al_destroy_path(path);
+
     default_font = al_create_builtin_font();
 
     lemming_sprite = al_load_bitmap("lemmings.png");
@@ -43,6 +48,7 @@ void game_run() {
     al_use_transform(&transform);
 
     ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
+    
 
     al_register_event_source(queue, al_get_display_event_source(display));
 
@@ -79,9 +85,9 @@ INPUT_RESULT game_handle_input(ALLEGRO_EVENT* event) {
 }
 
 void game_update(void) {
-    if (active_lemmings < max_lemmings && current_time > last_spawn + spawn_time) {
+    if (active_lemmings < MAX_LEMMINGS && current_time > last_spawn + spawn_time) {
         last_spawn = current_time;
-        lemmings[active_lemmings++] = (LEMMING) { 128, 0, WALKING_LEFT };
+        lemmings[active_lemmings++] = (LEMMING) { 128, 0, WALKING_RIGHT };
     }
     for (int i = 0; i < active_lemmings; i++) {
         lemming_update(&lemmings[i]);
@@ -91,9 +97,13 @@ void game_update(void) {
 void game_draw(void) {
     al_clear_to_color(al_map_rgba(0, 255, 255, 255));
     al_draw_bitmap(active_world.sprite, 0, 0, 0);
+
+    al_hold_bitmap_drawing(true);
     for (int i = 0; i < active_lemmings; i++) {
         lemming_draw(&lemmings[i]);
     }
+    al_hold_bitmap_drawing(false);
+
     al_draw_textf(default_font, al_map_rgba(255, 255, 0, 255), 0, 0, ALLEGRO_ALIGN_LEFT, "%.0f", 1.0 / delta);
     al_flip_display();
 }

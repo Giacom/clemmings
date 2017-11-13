@@ -1,8 +1,7 @@
 #include "allegro5/allegro.h"
 #include "game.h"
 
-int main() {
-    
+int main(void) {
     game_run();
-
+    return 0;
 }

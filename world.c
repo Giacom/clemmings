@@ -50,13 +50,14 @@ bool is_collision(WORLD* world, int x, int y) {
 }
 
 BLOCK_FLAG get_collision_flag(WORLD* world, int x, int y) {
-#if DEBUG
-    if (world->width <= x || world->height <= y) {
-        return 0;
-        //printf("Error, attempting to get collision flag that is outside world size.");
-        //exit(1);
+    if (DEBUG) {
+        if (world->width <= x || world->height <= y) {
+            return 0;
+            //printf("Error, attempting to get collision flag that is outside world size.");
+            //exit(1);
+        }
     }
-#endif
+
     int index = GET_INDEX(world, x, y);
     return world->collision_map[index];
 }
