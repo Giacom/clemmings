@@ -4,8 +4,8 @@ WARNING_FLAGS = -Wall -Wextra -Werror -Wpedantic -Wshadow -Wcast-qual -Wpointer-
 
 LIB_FLAGS = $(shell pkg-config --cflags --libs allegro-5 allegro_main-5 allegro_image-5 allegro_font-5) -lm
 
-HEADERS = game.h lemming.h world.h
-SOURCE = main.c game.c lemming.c world.c
+HEADERS = game.h lemming.h world.h input.h
+SOURCE = main.c game.c lemming.c world.c input.c
 BINARY = lemmings
 
 all:

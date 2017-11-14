@@ -7,6 +7,7 @@
 #include "game.h"
 #include "lemming.h"
 #include "world.h"
+#include "input.h"
 
 int scale = 4;
 int screen_width = 1024, screen_height = 512;
@@ -27,6 +28,9 @@ void game_run() {
     al_append_path_component(path, "resources");
     al_change_directory(al_path_cstr(path, '/'));  // change the working directory
     al_destroy_path(path);
+
+    al_install_mouse();
+    al_install_keyboard();
 
     default_font = al_create_builtin_font();
 
@@ -49,19 +53,25 @@ void game_run() {
 
     ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
     
-
     al_register_event_source(queue, al_get_display_event_source(display));
+    al_register_event_source(queue, al_get_keyboard_event_source());
 
     bool running = true;
 
     previous_time = al_get_time();
     current_time = previous_time;
 
+    const static double running_fps = 1.0 / 60.0;
+
     while (running) {
         ticks++;
+
+        if (delta < (current_time - previous_time)) {
+            al_rest(running_fps - (current_time - previous_time));
+        }
+
         previous_time = current_time;
         current_time = al_get_time();
-
         delta = current_time - previous_time;
 
         ALLEGRO_EVENT event;
@@ -72,6 +82,8 @@ void game_run() {
             }
         }
 
+        update_mouse_states();
+
         game_update();
         game_draw();
     }
@@ -81,14 +93,19 @@ INPUT_RESULT game_handle_input(ALLEGRO_EVENT* event) {
     if (event->type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
         return QUIT_GAME;
     }
+    if (event->type == ALLEGRO_EVENT_KEY_UP && event->keyboard.keycode == ALLEGRO_KEY_ESCAPE) {
+        return QUIT_GAME;
+    }
     return NOTHING;
 }
 
 void game_update(void) {
+
     if (active_lemmings < MAX_LEMMINGS && current_time > last_spawn + spawn_time) {
         last_spawn = current_time;
         lemmings[active_lemmings++] = (LEMMING) { 128, 0, WALKING_RIGHT };
     }
+
     for (int i = 0; i < active_lemmings; i++) {
         lemming_update(&lemmings[i]);
     }
