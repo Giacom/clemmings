@@ -101,6 +101,13 @@ INPUT_RESULT game_handle_input(ALLEGRO_EVENT* event) {
 
 void game_update(void) {
 
+    if (is_mouse_up(LEFT_MOUSE_BUTTON)) {
+        int x = 0, y = 0;
+        get_mouse_position(&x, &y);
+        printf("click (%d %d)\n", x, y);
+        destruct_collision(&active_world, x, y, 32, 32);
+    }
+
     if (active_lemmings < MAX_LEMMINGS && current_time > last_spawn + spawn_time) {
         last_spawn = current_time;
         lemmings[active_lemmings++] = (LEMMING) { 128, 0, WALKING_RIGHT };
@@ -109,6 +116,8 @@ void game_update(void) {
     for (int i = 0; i < active_lemmings; i++) {
         lemming_update(&lemmings[i]);
     }
+
+    update_bitmap_from_collision_map(&active_world);
 }
 
 void game_draw(void) {
@@ -121,6 +130,10 @@ void game_draw(void) {
     }
     al_hold_bitmap_drawing(false);
 
-    al_draw_textf(default_font, al_map_rgba(255, 255, 0, 255), 0, 0, ALLEGRO_ALIGN_LEFT, "%.0f", 1.0 / delta);
+    if (DEBUG) {
+        int x = 0, y = 0;
+        get_mouse_position(&x, &y);
+        al_draw_textf(default_font, al_map_rgba(255, 255, 0, 255), 0, 0, ALLEGRO_ALIGN_LEFT, "(%d, %d) %.0f", x, y, 1.0 / delta);
+    }
     al_flip_display();
 }

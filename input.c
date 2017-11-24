@@ -10,8 +10,9 @@ typedef enum {
 
 static MOUSE_BUTTON_STATE mouse_button_states[MAX_MOUSE_BUTTONS];
 
+ALLEGRO_MOUSE_STATE state;
+
 void update_mouse_states(void) {
-    ALLEGRO_MOUSE_STATE state;
     al_get_mouse_state(&state);
     
     for (unsigned int button = 1; button <= MAX_MOUSE_BUTTONS; button++) {
@@ -58,4 +59,15 @@ bool is_mouse_pressed(int button) {
 
 bool is_mouse_released(int button) {
     return mouse_button_states[button] == MOUSE_UP || mouse_button_states[button] == MOUSE_RELEASED;
+}
+
+void get_mouse_position(int *x_out, int *y_out) {
+    float x = state.x;
+    float y = state.y;
+
+    const ALLEGRO_TRANSFORM* transform = al_get_current_inverse_transform();
+    al_transform_coordinates(transform, &x, &y);
+
+    *(x_out) = (int)x;
+    *(y_out) = (int)y;
 }
