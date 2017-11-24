@@ -102,10 +102,11 @@ INPUT_RESULT game_handle_input(ALLEGRO_EVENT* event) {
 void game_update(void) {
 
     if (is_mouse_up(LEFT_MOUSE_BUTTON)) {
+        int x_range = 32, y_range = 32;
         int x = 0, y = 0;
         get_mouse_position(&x, &y);
         printf("click (%d %d)\n", x, y);
-        destruct_collision(&active_world, x, y, 32, 32);
+        destruct_collision(&active_world, x - x_range / 2, y - y_range / 2, x_range, y_range);
     }
 
     if (active_lemmings < MAX_LEMMINGS && current_time > last_spawn + spawn_time) {

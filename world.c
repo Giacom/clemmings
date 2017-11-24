@@ -51,21 +51,25 @@ void update_bitmap_from_collision_map(WORLD *world) {
     }
     world->is_collision_dirty = false;
 
- //   al_lock_bitmap(world->sprite, ALLEGRO_LOCK_READWRITE, al_get_bitmap_format(world->sprite));
     ALLEGRO_COLOR blank = al_map_rgba(0, 0, 0, 0);
+
 
     ALLEGRO_BITMAP* prev_bitmap = al_get_target_bitmap();
     al_set_target_bitmap(world->sprite);
+
+    al_lock_bitmap(world->sprite, ALLEGRO_PIXEL_FORMAT_ANY, 0);
+
+    // TODO: Use a buffer of regions to update; instead of looping through the whole world
     for (int x = 0; x < world->width; x++) {
         for (int y = 0; y < world->height; y++) {
             int index = GET_INDEX(world, x, y);
-            if (!(world->collision_map[index] & WORLD_FLAG_COLLISION)) {
+            if ((world->collision_map[index] & WORLD_FLAG_COLLISION) == false) {
                 al_put_pixel(x, y, blank);
             }
         }
     }
+    al_unlock_bitmap(world->sprite);
     al_set_target_bitmap(prev_bitmap);
-//    al_unlock_bitmap(world->sprite);
 }
 
 bool is_collision(WORLD* world, int x, int y) {
