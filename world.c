@@ -76,13 +76,13 @@ bool is_collision(WORLD* world, int x, int y) {
     return (get_collision_flag(world, x, y) & WORLD_FLAG_COLLISION) != 0;
 }
 
+bool is_in_world_bounds(WORLD* world, int x, int y) {
+    return world->width > x && world->height > y && x >= 0 && y >= 0;
+}
+
 BLOCK_FLAG get_collision_flag(WORLD* world, int x, int y) {
-    if (DEBUG) {
-        if (world->width <= x || world->height <= y) {
-            return 0;
-            //printf("Error, attempting to get collision flag that is outside world size.");
-            //exit(1);
-        }
+    if (!is_in_world_bounds(world, x, y)) {
+        return 0;
     }
 
     int index = GET_INDEX(world, x, y);
@@ -92,8 +92,10 @@ BLOCK_FLAG get_collision_flag(WORLD* world, int x, int y) {
 void destruct_collision(WORLD* world, int x, int y, int x_range, int y_range) {
     for (int w_y = y; w_y < y + y_range; w_y++) {
         for (int w_x = x; w_x < x + x_range; w_x++) {
-            int index = GET_INDEX(world, w_x, w_y);
-            world->collision_map[index] &= ~WORLD_FLAG_COLLISION;
+            if (is_in_world_bounds(world, w_x, w_y)) {
+                int index = GET_INDEX(world, w_x, w_y);
+                world->collision_map[index] &= ~WORLD_FLAG_COLLISION;
+            }
         }
     }
     world->is_collision_dirty = true;
